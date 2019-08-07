@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    <!--配置Spring的扫描器   给带有特定注解bean注册到容器中-->
+    <context:component-scan base-package="com.qf.myblogssm">
+    </context:component-scan>
+
+
+    <!--引入数据库的初始文件文件 -->
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:db.properties"/>
+    </bean>
+
+    <!-- 配置数据源 c3p0 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close">
+        <property name="driverClass" value="${driver}"/>
+        <property name="jdbcUrl" value="${url}"/>
+        <property name="user" value="${username}"/>
+        <property name="password" value="${password}"/>
+        <!-- c3p0连接池的私有属性 -->
+        <property name="maxPoolSize" value="${maxActive}"/>
+        <property name="minPoolSize" value="${minActive}"/>
+        <property name="initialPoolSize" value="${initialSize}"/>
+        <!-- 关闭连接后不自动commit -->
+        <property name="autoCommitOnClose" value="${autoCommitOnClose}"/>
+        <!-- 获取连接超时时间 -->
+        <property name="checkoutTimeout" value="${maxWait}"/>
+        <!-- 当获取连接失败重试次数 -->
+        <property name="acquireRetryAttempts" value="${acquireRetryAttempts}"/>
+    </bean>
+
+    <!-- spring和MyBatis整合，通过spring来管理MyBatis的SqlSessionFactory会话工厂 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--注入我们的数据源 -->
+        <property name="dataSource" ref="dataSource">
+        </property>
+        <!--指定mybatis的配置文件路径，该配置文件下不需要再定义数据库连接信息和mapper信息了，但是可以有一些关于mybatis的配置信息-->
+        <!--<property name="configLocation" value="classpath:mybatis.xml"/>-->
+        <!--扫描mapper配置文件中的.xml文件-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <!--设置别名-->
+        <property name="typeAliasesPackage" value="com.qf.myblogssm.pojo">
+        </property>
+    </bean>
+
+    <!-- 定义sqlSession对象，通过SqlSessionTemplate来产生，需要在构造方法中指定会话工厂
+         相当于原来mybatis中的sessionFactory.openSession();SqlSessionTemplate是线程安全的，所以采用单例模式
+     -->
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+        <!--注入会话工厂-->
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!--定义mybaits的DAO接口所在的包名，spring会自动查找其下的接口，并为其自动创建bean，无需我们定义-->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--注入sqlSessionTemplate-->
+        <property name="sqlSessionTemplateBeanName" value="sqlSessionTemplate"/>
+        <!--配置要扫描的dao包 -->
+        <property name="basePackage" value="com.qf.myblogssm.dao">
+        </property>
+    </bean>
+    <!-- JDBC事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!-- 启用支持annotation注解方式事务管理 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>

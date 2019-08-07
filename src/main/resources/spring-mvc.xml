@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+         http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- 定义自动扫描包的路径,在此处仅扫描Controller所在的包，如果有多个需要逗号分隔。需要注意：此处扫描和spring的自动扫描的包不要出现重叠-->
+    <context:component-scan base-package="com.qf.myblogssm">
+    </context:component-scan>
+    <!-- 注册spring mvc的注解驱动，只有注册了springmvc才能使用完整的注解功能 -->
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <!-- 将StringHttpMessageConverter的默认编码设为UTF-8 -->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <constructor-arg value="UTF-8"/>
+            </bean>
+            <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+            <!-- 将Jackson2HttpMessageConverter的默认格式化输出设为true -->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="prettyPrint" value="true"/>
+                <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!--所有静态资源需要重新映射 -->
+    <mvc:resources location="/js/" mapping="/js/**">
+    </mvc:resources>
+    <mvc:resources location="/css/" mapping="/css/**">
+    </mvc:resources>
+    <mvc:resources location="/img/" mapping="/img/**">
+    </mvc:resources>
+    <mvc:resources location="/admin/" mapping="/admin/**">
+    </mvc:resources>
+    <mvc:resources location="/editormd/" mapping="/editormd/**">
+    </mvc:resources>
+    <mvc:resources location="/jsp/" mapping="/jsp/**">
+    </mvc:resources>
+
+    <!--设置视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <!-- 文件上传-->
+    <bean name="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 默认编码 -->
+        <property name="defaultEncoding" value="utf-8"/>
+        <!-- 文件大小最大值 -->
+        <property name="maxUploadSize" value="10485760000"/>
+        <!-- 内存中的最大值 -->
+        <property name="maxInMemorySize" value="40960"/>
+    </bean>
+</beans>

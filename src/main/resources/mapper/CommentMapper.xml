@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qf.myblogssm.dao.CommentMapper" >
+  <resultMap id="BaseResultMap" type="com.qf.myblogssm.pojo.Comment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="article_id" property="articleId" jdbcType="INTEGER" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="star" property="star" jdbcType="INTEGER" />
+    <result column="diss" property="diss" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_comment
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.qf.myblogssm.pojo.Comment" >
+    INSERT INTO t_comment (article_id, nickname,
+      time, star, diss,
+      content)
+    VALUES (#{articleId,jdbcType=INTEGER}, #{nickname,jdbcType=VARCHAR},
+      #{time,jdbcType=TIMESTAMP}, #{star,jdbcType=INTEGER}, #{diss,jdbcType=INTEGER},
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qf.myblogssm.pojo.Comment" >
+    update t_comment
+    set article_id = #{articleId,jdbcType=INTEGER},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      star = #{star,jdbcType=INTEGER},
+      diss = #{diss,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, article_id, nickname, time, star, diss, content
+    from t_comment
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, article_id, nickname, time, star, diss, content
+    from t_comment
+  </select>
+  <select id="selectComment" resultType="int">
+    SELECT COUNT(DISTINCT sort)
+    FROM t_article
+  </select>
+  <select id="list" parameterType="int" resultMap="BaseResultMap">
+    select id, article_id, nickname, time, star, diss, content
+    from t_comment
+    where article_id = #{id,jdbcType=INTEGER}
+  </select>
+</mapper>

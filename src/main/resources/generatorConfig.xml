@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+    <!--配置文件-->
+    <properties resource="config.properties"/>
+    <!--产生最简单的sql  CRUD-->
+    <context id="Mysql" targetRuntime="MyBatis3simple">
+    <!--<context id="Mysql" targetRuntime="MyBatis3">-->
+        <!--产生序列化  hashcode    toString 方法-->
+        <!--<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"></plugin>-->
+        <!--<plugin type="org.mybatis.generator.plugins.ToStringPlugin"></plugin>-->
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"></plugin>
+        <commentGenerator>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!--数据库的连接-->
+        <jdbcConnection driverClass="${driverClassName}"
+                        connectionURL="${jdbc_url}" userId="${jdbc_username}"
+                        password="${jdbc_password}"/>
+
+        <!--指定生成的类型为java类型，避免数据库中number等类型字段 false时解析成Integer  true时解析成BigDecimal -->
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- 指定生成pojo的包和此包在项目中的地址； -->
+        <javaModelGenerator targetPackage="com.qf.myblogssm.pojo"
+                            targetProject="src/main/java">
+            <!-- enableSubPackages:是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="true"/>
+            <!-- 从数据库返回的值被清理前后的空格 -->
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- 指定生成pojo的映射xml文件的所在包和此包在项目中的地址 -->
+        <sqlMapGenerator targetPackage="com.qf.myblogssm.mapper"
+                         targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- 指定生成dao接口的所在包,以及包在项目中的地址 -->
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.qf.myblogssm.dao" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+
+        <!-- 配置表名跟pojo名  该table节点可以多个 -->
+        <table tableName="t_user" domainObjectName="User"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="t_article" domainObjectName="Article"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="t_comment" domainObjectName="Comment"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="t_tag" domainObjectName="Tag"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+
+    </context>
+</generatorConfiguration>
