@@ -86,7 +86,7 @@
     <dependency>
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis</artifactId>
-      <version>3.4.4</version>
+      <version>3.5.6</version>
     </dependency>
     <!--导入mybatis运行的时候的一些依赖包日志相关的 -->
     <dependency>
